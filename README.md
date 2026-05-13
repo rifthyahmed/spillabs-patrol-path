@@ -200,7 +200,7 @@ The frontend animation is just a bonus to visualise the result, but the core alg
 
 ## Links
 
-- **GitHub repository**: [https://github.com/yourusername/spillabs-patrol-path](https://github.com/yourusername/spillabs-patrol-path)
+- **GitHub repository**: [https://github.com/rifthyahmed/spillabs-patrol-path](https://github.com/rifthyahmed/spillabs-patrol-path)
 - **Live demo** (if deployed): not public, but you can run it locally via Docker.
 
 Thank you for reviewing my solution – I’m excited about the opportunity to work on geometry problems and backend systems at SPIL Labs!

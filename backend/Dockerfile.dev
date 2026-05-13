@@ -1,0 +1,26 @@
+FROM rust:latest
+
+RUN apt-get update && apt-get install -y wget xz-utils && rm -rf /var/lib/apt/lists/*
+
+RUN wget -qO /tmp/watchexec.tar.xz https://github.com/watchexec/watchexec/releases/download/v2.1.2/watchexec-2.1.2-x86_64-unknown-linux-musl.tar.xz \
+ && tar -xJf /tmp/watchexec.tar.xz -C /tmp \
+ && mv /tmp/watchexec-2.1.2-x86_64-unknown-linux-musl/watchexec /usr/local/bin/ \
+ && chmod +x /usr/local/bin/watchexec \
+ && rm -rf /tmp/watchexec*
+
+WORKDIR /app
+
+# Store compiled artifacts outside the watched directory to prevent infinite loop
+ENV CARGO_TARGET_DIR=/tmp/rust-target
+
+COPY Cargo.toml .
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+RUN cargo build --release
+RUN rm -rf src
+
+COPY . .
+
+EXPOSE 8080
+
+# Removed --clear flag to avoid syntax error
+CMD ["watchexec", "-r", "--poll", "1", "cargo", "run"]

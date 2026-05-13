@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - patrol-net
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]  # we don't have a /health endpoint, so optional
+      interval: 10s
+      timeout: 2s
+      retries: 5
+    environment:
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - patrol-net
+
+networks:
+  patrol-net:
+    driver: bridge

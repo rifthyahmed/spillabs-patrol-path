@@ -1,0 +1,36 @@
+# Builder stage
+FROM rust:latest as builder
+
+WORKDIR /app
+
+# ---- Cache dependencies without any source ----
+# Create a dummy project in a temporary folder
+RUN USER=root cargo new --bin dummy
+WORKDIR /app/dummy
+COPY Cargo.toml ./Cargo.toml
+RUN cargo build --release
+
+# ---- Build the real source ----
+WORKDIR /app
+# Copy real source
+COPY src ./src
+COPY Cargo.toml ./
+
+# Remove dummy target and rebuild from scratch
+RUN cargo clean
+RUN cargo build --release
+
+# Verify the binary size
+RUN ls -lh /app/target/release/patrol_backend
+
+# ---- Runtime stage ----
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /app/target/release/patrol_backend /usr/local/bin/patrol_backend
+
+# Make sure it's executable
+RUN chmod +x /usr/local/bin/patrol_backend
+
+ENV RUST_BACKTRACE=full
+EXPOSE 8080
+CMD ["/usr/local/bin/patrol_backend"]

@@ -6,7 +6,7 @@ The problem: given axis‑aligned rectangles, find the shortest closed patrol pa
 
 ## Demo
 <video width="100%" controls>
-  <source src="Patrol-Path-Planner.webm" type="video/webm">
+  <source src="./demo.webm" type="video/webm">
   Your browser does not support the video tag.
 </video>
 
